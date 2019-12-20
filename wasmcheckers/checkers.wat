@@ -1,5 +1,6 @@
 (module
 	(memory $mem 1)
+	(global $currentTurn (mut i32) (i32.const 0))
   (global $WHITE i32 (i32.const 2))
   (global $BLACK i32 (i32.const 1))
   (global $CROWN i32 (i32.const 4))
@@ -99,9 +100,36 @@
 	;; Detect if values are within range (inclusive high and low)
 	(func $inRange (param $low i32) (param $high i32) (param $value i32) (result i32)
 				(i32.and
-					(i32.ge_s (get_local $value) (get_local $low))
-					(i32.le_s (get_local $value) (get_local $high))
-				 )
+						(i32.ge_s (get_local $value) (get_local $low))
+						(i32.le_s (get_local $value) (get_local $high))
+				)
 		)
-	)
+
+		;; Gets the current turn owner (white or black) 
+		(func $getTurnOwner (result i32)
+				 (get_global $currentTurn)
+		)
+
+		;; At the end of a turn, switch turn owner to the other player
+		(func $toggleTurnOwner
+					(if (i32.eq (call $getTurnOwner) (i32.const 1))
+						(then (call $setTurnOwner (i32.const 2)))
+						(else (call $setTurnOwner (i32.const 1)))
+					)
+		)
+
+		;; Sets the turn owner
+		(func $setTurnOwner (param $piece i32)
+				 (set_global $currentTurn (get_local $piece))
+		)
+
+		;; Determine if it's a player's turn
+		(func $isPlayersTurn (param $player i32) (result i32)
+			(i32.gt_s
+				(i32.and (get_local $player) (call $getTurnOwner))
+				(i32.const 0)
+			)				
+		)
+
+)
 
