@@ -1,0 +1,9 @@
+[package]
+name = "rustycheckers"
+version = "0.1.0"
+authors = ["Jeroen <info@jeroenvandenhoek.nl>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
